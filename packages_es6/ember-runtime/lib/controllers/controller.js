@@ -43,7 +43,8 @@ var ControllerMixin = Mixin.create(ActionHandler, {
 
   store: null,
 
-  model: computed.alias('content'),
+  model: null,
+  content: Ember.computed.alias('model'),
 
   deprecatedSendHandles: function(actionName) {
     return !!this[actionName];

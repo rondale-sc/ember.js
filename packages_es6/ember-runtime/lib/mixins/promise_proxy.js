@@ -17,7 +17,7 @@ function tap(proxy, promise) {
 
   return promise.then(function(value) {
     set(proxy, 'isFulfilled', true);
-    set(proxy, 'content', value);
+    set(proxy, 'model', value);
     return value;
   }, function(reason) {
     set(proxy, 'isRejected', true);
@@ -63,7 +63,7 @@ function tap(proxy, promise) {
   controller.get('isFulfilled') //=> true
   ```
 
-  As the controller is an ObjectController, and the json now its content,
+  As the controller is an ObjectController, and the json now its model,
   all the json properties will be available directly from the controller.
 
   ```javascript
@@ -99,7 +99,9 @@ var PromiseProxyMixin = Mixin.create({
     @property reason
     @default null
   */
-  reason:    null,
+  reason:  null,
+  model:   null,
+  content: Ember.computed.alias('model'),
 
   /**
     Once the proxied promise has settled this will become `false`.
