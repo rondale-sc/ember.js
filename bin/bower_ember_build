@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+COMPONENTS_EMBER="poc_ember_component"
+USER="rondale-sc"
+INCLUDED_FILES=`find ../dist/ -type f -maxdepth 1`
+
+case $CURRENT_BRANCH in
+  "master" )
+    CHANNEL="canary" ;;
+  "beta" )
+    CHANNEL="beta" ;;
+  "stable"  )
+    CHANNEL="release" ;;
+  "release" )
+    CHANNEL="release" ;;
+  "bower_beta_canary_release" ) # REMOVE ME: for testing purposes
+    CHANNEL="beta" ;;
+  * )
+    echo "Not a bower release branch.  Exiting!"
+    exit 0 ;;
+esac
+
+if [ -z "${GH_TOKEN}" ]; then
+  echo "GH_TOKEN is not defined, have a nice day!"
+  exit 0
+fi
+
+git clone https://${USER}:${GH_TOKEN}@github.com/${USER}/${COMPONENTS_EMBER}.git
+rm -rf ${COMPONENTS_EMBER}/*
+cp -r ${INCLUDED_FILES} ${COMPONENTS_EMBER}/
+cd ${COMPONENTS_EMBER}
+git remote rm origin
+git remote add origin https://${USER}:${GH_TOKEN}@github.com/${USER}/${COMPONENTS_EMBER}.git
+git add -A
+git commit -m "Ember bower component auto build"
+git push -fq origin master
+echo -e "Done\n"
+
